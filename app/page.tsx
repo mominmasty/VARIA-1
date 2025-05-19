@@ -78,7 +78,9 @@ export default function Home() {
               Templates
             </Link>
           </nav>
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white rounded-full">Get Started</Button>
+          <Link href="/auth/signin">
+            <Button className="bg-blue-500 hover:bg-blue-600 text-white rounded-full">Get Started</Button>
+          </Link>
         </div>
       </header>
 
@@ -90,7 +92,9 @@ export default function Home() {
             with human-like precision.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button className="bg-gray-700 hover:bg-gray-600 text-white">Get Started</Button>
+            <Link href="/auth/signin">
+              <Button className="bg-gray-700 hover:bg-gray-600 text-white">Get Started</Button>
+            </Link>
             <Button variant="outline" className="text-black border-gray-700 hover:bg-gray-800 hover:text-white">
               Learn More
             </Button>
@@ -380,9 +384,11 @@ export default function Home() {
                 </li>
               </ul>
 
-              <Button variant="outline" className="w-full">
-                Get Started
-              </Button>
+              <Link href="/auth/signin">
+                <Button variant="outline" className="w-full">
+                  Get Started
+                </Button>
+              </Link>
             </div>
 
             <div className="border rounded-lg p-6 flex flex-col">
@@ -429,7 +435,9 @@ export default function Home() {
                 </li>
               </ul>
 
-              <Button className="w-full bg-black text-white hover:bg-gray-800">Get Started</Button>
+              <Link href="/auth/signin">
+                <Button className="w-full bg-black text-white hover:bg-gray-800">Get Started</Button>
+              </Link>
             </div>
 
             {/* Business Plan */}
@@ -477,9 +485,11 @@ export default function Home() {
                 </li>
               </ul>
 
-              <Button variant="outline" className="w-full">
-                Get Started
-              </Button>
+              <Link href="/auth/signin">
+                <Button variant="outline" className="w-full">
+                  Get Started
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
