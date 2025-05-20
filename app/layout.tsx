@@ -1,34 +1,25 @@
-import type React from "react"
-import "./globals.css"
-import { Inter } from "next/font/google"
-import { ThemeProvider } from "@/components/theme-provider"
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { Providers } from "./providers";
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] });
 
-export const metadata = {
-  title: "V.A.R.I.A - Voice-Activated Intelligent Assistant",
+export const metadata: Metadata = {
+  title: "VARIA - Voice-Activated Assistant for Real-Time Interaction",
   description: "Transform your business with AI-powered voice assistants",
-    generator: 'v0.dev'
-}
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-          storageKey="v0-theme"
-        >
-          {children}
-        </ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
-  )
+  );
 }

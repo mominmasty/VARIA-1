@@ -18,12 +18,10 @@ interface CallData {
   duration: string;
 }
 
-// Overview Chart Component
 const Overview = ({ callsData }: { callsData: CallData[] }) => {
   console.log('Overview component received callsData:', callsData);
   if (callsData.length === 0) return <div className="h-40 flex items-center justify-center text-gray-400">No data available for chart.</div>;
 
-  // Group calls by date and status
   const dailyCounts = callsData.reduce((acc, call) => {
     if (!acc[call.date]) {
       acc[call.date] = { positive: 0, negative: 0, rejected: 0 };
@@ -34,7 +32,6 @@ const Overview = ({ callsData }: { callsData: CallData[] }) => {
     return acc;
   }, {} as Record<string, { positive: number, negative: number, rejected: number }>);
 
-  // Get and sort unique dates
   const sortedDates = Object.keys(dailyCounts).sort();
 
   const data = {
@@ -85,7 +82,6 @@ const Overview = ({ callsData }: { callsData: CallData[] }) => {
   );
 };
 
-// Calls Breakdown Chart Component (Recharts version)
 const CallsBreakdown = ({ callsData }: { callsData: CallData[] }) => {
   if (callsData.length === 0) return <div className="h-40 flex items-center justify-center text-gray-400">No data available for chart.</div>;
 
@@ -95,27 +91,27 @@ const CallsBreakdown = ({ callsData }: { callsData: CallData[] }) => {
   }, {} as Record<string, number>);
 
   const pieChartData = Object.keys(statusCounts).map(status => {
-    let color = '#cccccc'; // Default color for neutral or unknown
+    let color = '#cccccc'; 
     if (status === 'positive') color = '#10b981';
     else if (status === 'negative') color = '#ef4444';
     else if (status === 'rejected') color = '#f59e0b';
 
     return {
-      name: `${status.charAt(0).toUpperCase() + status.slice(1)} Calls`, // Capitalize status for label
+      name: `${status.charAt(0).toUpperCase() + status.slice(1)} Calls`, 
       value: statusCounts[status],
       color: color,
     };
   });
 
   return (
-    <ResponsiveContainer width="100%" height={300}> {/* Adjusted height for better fit */}
+    <ResponsiveContainer width="100%" height={300}>
       <RechartsPieChart>
         <RechartsPie
           data={pieChartData}
           cx="50%"
           cy="50%"
           labelLine={false}
-          outerRadius={100} // Slightly increased outerRadius
+          outerRadius={100} 
           fill="#8884d8"
           dataKey="value"
           label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
@@ -131,7 +127,6 @@ const CallsBreakdown = ({ callsData }: { callsData: CallData[] }) => {
   );
 };
 
-// Recent Calls List Component
 const RecentCalls = ({ callsData }: { callsData: CallData[] }) => {
   const recentCalls = [...callsData]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -143,7 +138,7 @@ const RecentCalls = ({ callsData }: { callsData: CallData[] }) => {
       {recentCalls.map((call, index) => (
         <div key={index} className="flex items-center justify-between p-2 bg-gray-800/50 rounded-lg">
           <div>
-            <p className="font-medium">{call.name}</p>
+            <p className="font-medium text-blue-400 hover:text-blue-300 transition-colors duration-300">{call.name}</p>
             <p className="text-sm text-gray-400">{call.date}</p>
           </div>
           <div className="flex items-center gap-2">
@@ -163,22 +158,18 @@ const RecentCalls = ({ callsData }: { callsData: CallData[] }) => {
   );
 };
 
-// Calls Timeline Chart Component
 const CallsTimeline = ({ callsData }: { callsData: CallData[] }) => {
   if (callsData.length === 0) return <div className="h-40 flex items-center justify-center text-gray-400">No data available for chart.</div>;
 
-  // Calculate total duration per day
   const dailyDurations = callsData.reduce((acc, call) => {
     if (!acc[call.date]) {
       acc[call.date] = 0;
     }
-    // Convert duration string (MM:SS) to seconds and add to total
     const [minutes, seconds] = call.duration.split(':').map(Number);
     acc[call.date] += (minutes * 60) + seconds;
     return acc;
   }, {} as Record<string, number>);
 
-  // Get and sort unique dates
   const sortedDates = Object.keys(dailyDurations).sort();
 
   const data = {
@@ -214,7 +205,6 @@ const CallsTimeline = ({ callsData }: { callsData: CallData[] }) => {
   );
 };
 
-// Calls Performance Chart Component
 const CallsPerformance = ({ callsData }: { callsData: CallData[] }) => {
   const performanceData = callsData.reduce((acc, call) => {
     const date = call.date;
@@ -272,20 +262,16 @@ export default function AnalysesPage() {
     fetchData();
   }, []);
 
-  // Calculate stats based on all callsData
   const totalCalls = callsData.length;
   const positiveCalls = callsData.filter(call => call.status === 'positive').length;
   const negativeCalls = callsData.filter(call => call.status === 'negative').length;
   const rejectedCalls = callsData.filter(call => call.status === 'rejected').length;
 
-  // Calculate percentage changes (remove or adjust if needed later)
-  // Keeping for now but removing display from cards
   const calculateChange = (current: number, previous: number) => {
     if (previous === 0) return 100;
     return ((current - previous) / previous) * 100;
   };
 
-  // You might want to calculate these based on available data dates if needed
   const currentMonthCalls = callsData.filter(call => {
     const callDate = new Date(call.date);
     const currentDate = new Date();
@@ -316,136 +302,113 @@ export default function AnalysesPage() {
   if (error) return <div className="min-h-screen w-full bg-gradient-to-br from-[#18132a] to-[#1a0066] p-6 text-red-500">Error loading analyses data: {error}</div>;
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-[#18132a] to-[#1a0066] p-6">
-      {/* Nav Bar and Logo */}
-      <div className="flex flex-row items-center gap-8 mb-8">
-        <div className="text-4xl font-bold tracking-widest" style={{ letterSpacing: '0.2em' }}>
+    <div className="min-h-screen w-full bg-gradient-to-br from-[#18132a] via-[#1a0066] to-[#2a0080] p-6">
+      <div className="flex flex-row items-center gap-8 mb-12">
+        <div 
+          className="text-4xl font-bold tracking-widest hover:scale-105 transition-transform duration-300 cursor-pointer" 
+          style={{ letterSpacing: '0.2em' }}
+          onClick={() => window.location.href = '/'}
+        >
           <span className="bg-gradient-to-r from-green-400 via-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">VARIA</span>
         </div>
-        <div className="flex justify-center items-center gap-8 bg-black/80 rounded-full px-6 py-2 w-[240px]">
+        <div className="flex justify-center items-center gap-8 bg-black/40 backdrop-blur-sm rounded-full px-6 py-3 w-[240px] shadow-lg border border-white/10">
           <button
-            className="p-2 hover:bg-gray-800 rounded-full"
+            className="p-2 hover:bg-white/10 rounded-full transition-all duration-300"
             onClick={() => window.location.href = '/dashboard'}
           >
-            <Keyboard className="w-5 h-5 text-gray-200" />
+            <Keyboard className="w-5 h-5 text-gray-200 hover:text-white" />
           </button>
           <button
-            className="p-2 hover:bg-gray-800 rounded-full"
+            className="p-2 hover:bg-white/10 rounded-full transition-all duration-300"
             onClick={() => window.location.href = '/analyses'}
           >
-            <BarChart3 className="w-5 h-5 text-gray-200" />
+            <BarChart3 className="w-5 h-5 text-gray-200 hover:text-white" />
           </button>
-          <button className="p-2 hover:bg-gray-800 rounded-full"><ImageIcon className="w-5 h-5 text-gray-200" /></button>
+          <button className="p-2 hover:bg-white/10 rounded-full transition-all duration-300">
+            <ImageIcon className="w-5 h-5 text-gray-200 hover:text-white" />
+          </button>
         </div>
       </div>
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="mb-6">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="calls">Calls</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="agents">Agents</TabsTrigger>
+        <TabsList className="mb-8 bg-black/40 backdrop-blur-sm border border-white/10 p-1 rounded-full">
+          <TabsTrigger value="overview" className="rounded-full data-[state=active]:bg-white/10 transition-all duration-300">Overview</TabsTrigger>
+          <TabsTrigger value="calls" className="rounded-full data-[state=active]:bg-white/10 transition-all duration-300">Calls</TabsTrigger>
+          <TabsTrigger value="performance" className="rounded-full data-[state=active]:bg-white/10 transition-all duration-300">Performance</TabsTrigger>
+          <TabsTrigger value="agents" className="rounded-full data-[state=active]:bg-white/10 transition-all duration-300">Agents</TabsTrigger>
         </TabsList>
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <Card className="bg-black/40 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Calls</CardTitle>
-                <Phone className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium text-gray-200">Total Calls</CardTitle>
+                <Phone className="h-4 w-4 text-blue-400" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{totalCalls}</div>
-                {/* <p className="text-xs text-muted-foreground">
-                  <span className={`${totalChange >= 0 ? 'text-emerald-500' : 'text-rose-500'} flex items-center">
-                    {totalChange >= 0 ? <ArrowUp className="mr-1 h-4 w-4" /> : <ArrowDown className="mr-1 h-4 w-4" />}
-                    {Math.abs(totalChange).toFixed(1)}%
-                  </span>{" "}
-                  from last month
-                </p> */}
+                <div className="text-2xl font-bold text-white">{totalCalls}</div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-black/40 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Positive Calls</CardTitle>
+                <CardTitle className="text-sm font-medium text-gray-200">Positive Calls</CardTitle>
                 <CheckCircle className="h-4 w-4 text-emerald-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{positiveCalls}</div>
-                 {/* <p className="text-xs text-muted-foreground">
-                  <span className={`${positiveChange >= 0 ? 'text-emerald-500' : 'text-rose-500'} flex items-center">
-                    {positiveChange >= 0 ? <ArrowUp className="mr-1 h-4 w-4" /> : <ArrowDown className="mr-1 h-4 w-4" />}
-                    {Math.abs(positiveChange).toFixed(1)}%
-                  </span>{" "}
-                  from last month
-                </p> */}
+                <div className="text-2xl font-bold text-white">{positiveCalls}</div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-black/40 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Negative Calls</CardTitle>
+                <CardTitle className="text-sm font-medium text-gray-200">Negative Calls</CardTitle>
                 <XCircle className="h-4 w-4 text-rose-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{negativeCalls}</div>
-                 {/* <p className="text-xs text-muted-foreground">
-                  <span className={`${negativeChange >= 0 ? 'text-emerald-500' : 'text-rose-500'} flex items-center">
-                    {negativeChange >= 0 ? <ArrowUp className="mr-1 h-4 w-4" /> : <ArrowDown className="mr-1 h-4 w-4" />}
-                    {Math.abs(negativeChange).toFixed(1)}%
-                  </span>{" "}
-                  from last month
-                </p> */}
+                <div className="text-2xl font-bold text-white">{negativeCalls}</div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-black/40 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Rejected Calls</CardTitle>
+                <CardTitle className="text-sm font-medium text-gray-200">Rejected Calls</CardTitle>
                 <PhoneOff className="h-4 w-4 text-amber-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{rejectedCalls}</div>
-                 {/* <p className="text-xs text-muted-foreground">
-                  <span className={`${rejectedChange >= 0 ? 'text-emerald-500' : 'text-rose-500'} flex items-center">
-                    {rejectedChange >= 0 ? <ArrowUp className="mr-1 h-4 w-4" /> : <ArrowDown className="mr-1 h-4 w-4" />}
-                    {Math.abs(rejectedChange).toFixed(1)}%
-                  </span>{" "}
-                  from last month
-                </p> */}
+                <div className="text-2xl font-bold text-white">{rejectedCalls}</div>
               </CardContent>
             </Card>
           </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-4">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+            <Card className="col-span-4 bg-black/40 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300">
               <CardHeader>
-                <CardTitle>Call Overview</CardTitle>
-                <CardDescription>Call performance over the last 30 days</CardDescription>
+                <CardTitle className="text-white">Call Overview</CardTitle>
+                <CardDescription className="text-gray-400">Call performance over the last 30 days</CardDescription>
               </CardHeader>
               <CardContent className="pl-2 min-h-[250px]">
                 <Overview callsData={callsData} />
               </CardContent>
             </Card>
-            <Card className="col-span-3">
+            <Card className="col-span-3 bg-black/40 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300">
               <CardHeader>
-                <CardTitle>Call Breakdown</CardTitle>
-                <CardDescription>Distribution of call outcomes</CardDescription>
+                <CardTitle className="text-white">Call Breakdown</CardTitle>
+                <CardDescription className="text-gray-400">Distribution of call outcomes</CardDescription>
               </CardHeader>
               <CardContent className="min-h-[250px] flex items-center justify-center">
                 <CallsBreakdown callsData={callsData} />
               </CardContent>
             </Card>
           </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-4">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+            <Card className="col-span-4 bg-black/40 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300">
               <CardHeader>
-                <CardTitle>Recent Calls</CardTitle>
-                <CardDescription>Latest call activities and outcomes</CardDescription>
+                <CardTitle className="text-white">Recent Calls</CardTitle>
+                <CardDescription className="text-gray-400">Latest call activities and outcomes</CardDescription>
               </CardHeader>
               <CardContent>
                 <RecentCalls callsData={callsData} />
               </CardContent>
             </Card>
-            <Card className="col-span-3">
+            <Card className="col-span-3 bg-black/40 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300">
               <CardHeader>
-                <CardTitle>Daily Call Duration</CardTitle>
-                <CardDescription>Total call duration by day</CardDescription>
+                <CardTitle className="text-white">Daily Call Duration</CardTitle>
+                <CardDescription className="text-gray-400">Total call duration by day</CardDescription>
               </CardHeader>
               <CardContent>
                 <CallsTimeline callsData={callsData} />
@@ -453,18 +416,18 @@ export default function AnalysesPage() {
             </Card>
           </div>
         </TabsContent>
-        <TabsContent value="calls" className="space-y-4">
-          <Card>
+        <TabsContent value="calls" className="space-y-6">
+          <Card className="bg-black/40 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300">
             <CardHeader>
-              <CardTitle>Call Details</CardTitle>
-              <CardDescription>Detailed breakdown of all calls</CardDescription>
+              <CardTitle className="text-white">Call Details</CardTitle>
+              <CardDescription className="text-gray-400">Detailed breakdown of all calls</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {callsData.map((call, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg">
+                  <div key={index} className="flex items-center justify-between p-4 bg-black/20 backdrop-blur-sm rounded-lg border border-white/5 hover:border-white/10 transition-all duration-300">
                     <div>
-                      <p className="font-medium">{call.name}</p>
+                      <p className="font-medium text-white">{call.name}</p>
                       <p className="text-sm text-gray-400">{call.date}</p>
                     </div>
                     <div className="flex items-center gap-4">
@@ -484,25 +447,25 @@ export default function AnalysesPage() {
             </CardContent>
           </Card>
         </TabsContent>
-        <TabsContent value="performance" className="space-y-4">
-          <Card>
+        <TabsContent value="performance" className="space-y-6">
+          <Card className="bg-black/40 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300">
             <CardHeader>
-              <CardTitle>Performance Metrics</CardTitle>
-              <CardDescription>Detailed performance analysis</CardDescription>
+              <CardTitle className="text-white">Performance Metrics</CardTitle>
+              <CardDescription className="text-gray-400">Detailed performance analysis</CardDescription>
             </CardHeader>
             <CardContent>
               <CallsPerformance callsData={callsData} />
             </CardContent>
           </Card>
         </TabsContent>
-        <TabsContent value="agents" className="space-y-4">
-          <Card>
+        <TabsContent value="agents" className="space-y-6">
+          <Card className="bg-black/40 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300">
             <CardHeader>
-              <CardTitle>Agent Performance</CardTitle>
-              <CardDescription>Individual agent metrics and comparison</CardDescription>
+              <CardTitle className="text-white">Agent Performance</CardTitle>
+              <CardDescription className="text-gray-400">Individual agent metrics and comparison</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Agent performance metrics would appear here.</p>
+              <p className="text-gray-400">Agent performance metrics would appear here.</p>
             </CardContent>
           </Card>
         </TabsContent>

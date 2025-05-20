@@ -1,88 +1,127 @@
-import Link from 'next/link'
+"use client";
+
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 
 export default function SignUp() {
+  const [signupName, setSignupName] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPhone, setSignupPhone] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (signupPassword !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      // Here you would typically make an API call to register the user
+      console.log("Signing up user:", {
+        name: signupName,
+        email: signupEmail,
+        phone: signupPhone,
+        password: signupPassword,
+      });
+      // After successful signup, you might want to automatically sign in the user
+      await signIn("credentials", {
+        email: signupEmail,
+        password: signupPassword,
+        callbackUrl: "/dashboard",
+      });
+    } catch (error) {
+      console.error("Signup error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-lg">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900">Create your account</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Already have an account?{' '}
-            <Link href="/auth/signin" className="font-medium text-blue-600 hover:text-blue-500">
-              Sign in
-            </Link>
-          </p>
-        </div>
-
-        <form className="mt-8 space-y-6" action="#" method="POST">
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Full name
-              </label>
-              <input
-                id="name"
-                name="name"
+    <div className="min-h-screen w-full bg-gradient-to-br from-[#18132a] via-[#1a0066] to-[#2a0080] flex items-center justify-center p-4">
+      <Card className="bg-black/40 backdrop-blur-sm border border-white/10 w-full max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle className="text-4xl font-bold mb-2">
+            <span className="bg-gradient-to-r from-green-400 via-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              VARIA
+            </span>
+          </CardTitle>
+          <CardDescription className="text-gray-400">Create your account</CardDescription>
+          <Link 
+            href="/auth/signin"
+            className="text-gray-400 hover:text-white mt-2 inline-block"
+          >
+            Already have an account? Sign in
+          </Link>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSignup} className="space-y-4">
+            <div className="space-y-2">
+              <Input
                 type="text"
-                autoComplete="name"
+                placeholder="Full Name"
+                value={signupName}
+                onChange={(e) => setSignupName(e.target.value)}
+                className="bg-black/20 border-white/10 text-white"
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
+            <div className="space-y-2">
+              <Input
                 type="email"
-                autoComplete="email"
+                placeholder="Email"
+                value={signupEmail}
+                onChange={(e) => setSignupEmail(e.target.value)}
+                className="bg-black/20 border-white/10 text-white"
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
+            <div className="space-y-2">
+              <Input
+                type="tel"
+                placeholder="Phone Number"
+                value={signupPhone}
+                onChange={(e) => setSignupPhone(e.target.value)}
+                className="bg-black/20 border-white/10 text-white"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Input
                 type="password"
-                autoComplete="new-password"
+                placeholder="Password"
+                value={signupPassword}
+                onChange={(e) => setSignupPassword(e.target.value)}
+                className="bg-black/20 border-white/10 text-white"
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-
-            <div>
-              <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
-                Confirm password
-              </label>
-              <input
-                id="confirm-password"
-                name="confirm-password"
+            <div className="space-y-2">
+              <Input
                 type="password"
-                autoComplete="new-password"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="bg-black/20 border-white/10 text-white"
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-          </div>
-
-          <div>
-            <button
+            <Button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full bg-white text-black hover:bg-gray-100 transition-colors duration-300"
+              disabled={isLoading}
             >
-              Create account
-            </button>
-          </div>
-        </form>
-      </div>
-    </main>
-  )
+              {isLoading ? "Creating account..." : "Create Account"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
 } 
