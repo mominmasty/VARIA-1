@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -55,8 +56,14 @@ export default function SignIn() {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    router.push('/dashboard');
+  const handleGoogleSignIn = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/auth/google");
+      window.location.href = response.data.url; // Redirect to Google OAuth
+    } catch (error) {
+      console.error("Google Sign-In error:", error);
+      alert("Failed to initiate Google Sign-In.");
+    }
   };
 
   return (
