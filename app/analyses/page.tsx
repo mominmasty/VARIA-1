@@ -298,8 +298,16 @@ export default function AnalysesPage() {
   const negativeChange = calculateChange(currentMonthCalls.filter(call => call.status === 'negative').length, prevNegativeCalls);
   const rejectedChange = calculateChange(currentMonthCalls.filter(call => call.status === 'rejected').length, prevRejectedCalls);
 
-  if (loading) return <div className="min-h-screen w-full bg-gradient-to-br from-[#18132a] to-[#1a0066] p-6 text-white">Loading analyses data...</div>;
-  if (error) return <div className="min-h-screen w-full bg-gradient-to-br from-[#18132a] to-[#1a0066] p-6 text-red-500">Error loading analyses data: {error}</div>;
+  if (loading) return (
+    <div className="min-h-screen w-full bg-gradient-to-br from-[#18132a] to-[#1a0066] flex items-center justify-center">
+      <div className="text-2xl text-white/80 animate-pulse">Loading analyses data...</div>
+    </div>
+  );
+  if (error) return (
+    <div className="min-h-screen w-full bg-gradient-to-br from-[#18132a] to-[#1a0066] flex items-center justify-center">
+      <div className="text-2xl text-red-500">Error loading analyses data: {error}</div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#18132a] via-[#1a0066] to-[#2a0080] p-6">
