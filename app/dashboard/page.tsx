@@ -4,10 +4,16 @@ import { BarChart3, Image as ImageIcon, Keyboard } from "lucide-react"
 import Image from "next/image"
 import { DayPicker } from "react-day-picker"
 import "react-day-picker/dist/style.css"
+import SignIn from "../auth/signin/page"
+import signup from "../auth/signup/page"
+import { useSession } from "next-auth/react"
+
 
 function CalendarWidget() {
   const [selected, setSelected] = useState<Date | undefined>(new Date(2025, 4, 17))
-  return (
+  const [savedName, setSavedName] = useState("");
+  const [savedEmail, setSavedEmail] = useState("");
+    return (
     <div className="bg-black/90 backdrop-blur-sm rounded-xl p-3 w-[360px] text-white shadow-xl border border-white/10">
       <DayPicker
         mode="single"
@@ -41,6 +47,8 @@ function CalendarWidget() {
 }
 
 export default function Dashboard() {
+  const { data: session } = useSession();
+  
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#18132a] to-[#1a0066] p-6">
       <div className="flex justify-between items-start">
@@ -69,8 +77,8 @@ export default function Dashboard() {
               className="rounded-full border-2 border-white"
             />
             <div className="flex flex-col">
-              <span className="font-semibold text-white">Alex Robert</span>
-              <span className="text-xs text-gray-300">alexsoc@gmail.com</span>
+              <span className="font-semibold text-white">{session?.user?.name || 'Guest'}</span>
+              <span className="text-xs text-gray-300">{session?.user?.email || 'Not signed in'}</span>
             </div>
           </div>
           <button

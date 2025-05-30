@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
 export default function SignUp() {
+  const router = useRouter();
   const [signupName, setSignupName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPhone, setSignupPhone] = useState("");
@@ -23,19 +25,25 @@ export default function SignUp() {
     }
     setIsLoading(true);
     try {
-      // Here you would typically make an API call to register the user
       console.log("Signing up user:", {
         name: signupName,
         email: signupEmail,
         phone: signupPhone,
         password: signupPassword,
       });
-      // After successful signup, you might want to automatically sign in the user
-      await signIn("credentials", {
+      
+      const result = await signIn("credentials", {
         email: signupEmail,
         password: signupPassword,
-        callbackUrl: "/dashboard",
+        name: signupName,
+        redirect: false,
       });
+
+      if (result?.error) {
+        console.error("Signup error:", result.error);
+      } else {
+        router.push('/dashboard');
+      }
     } catch (error) {
       console.error("Signup error:", error);
     } finally {

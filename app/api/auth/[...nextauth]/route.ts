@@ -7,11 +7,15 @@ declare module "next-auth" {
     user: {
       id: string;
       phoneNumber: string;
+      name: string;
+      email: string;
     } & DefaultSession["user"]
   }
   
   interface User extends DefaultUser {
     phoneNumber: string;
+    name: string;
+    email: string;
   }
 }
 
@@ -19,6 +23,8 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     phoneNumber: string;
+    name: string;
+    email: string;
   }
 }
 
@@ -31,12 +37,12 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
         phoneNumber: { label: "Phone Number", type: "tel" },
         otp: { label: "OTP", type: "text" },
+        name: { label: "Name", type: "text" },
       },
       async authorize(credentials) {
-        // Allow any login
         return {
           id: "1",
-          name: "Test User",
+          name: credentials?.name || "Test User",
           email: credentials?.email || "test@example.com",
           phoneNumber: credentials?.phoneNumber || "+1234567890",
         };
@@ -51,6 +57,8 @@ const handler = NextAuth({
       if (token && session.user) {
         session.user.id = token.id;
         session.user.phoneNumber = token.phoneNumber;
+        session.user.name = token.name;
+        session.user.email = token.email;
       }
       return session;
     },
@@ -58,6 +66,8 @@ const handler = NextAuth({
       if (user) {
         token.id = user.id;
         token.phoneNumber = user.phoneNumber;
+        token.name = user.name;
+        token.email = user.email;
       }
       return token;
     },

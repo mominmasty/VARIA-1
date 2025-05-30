@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -21,8 +22,17 @@ export default function SignIn() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      // Simple redirect to dashboard
-      router.push('/dashboard');
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        console.error("Sign in error:", result.error);
+      } else {
+        router.push('/dashboard');
+      }
     } catch (error) {
       console.error("Sign in error:", error);
     } finally {
@@ -46,7 +56,17 @@ export default function SignIn() {
       setIsLoading(true);
       try {
         console.log("Verifying OTP:", otp);
-        router.push('/dashboard');
+        const result = await signIn("credentials", {
+          phoneNumber,
+          otp,
+          redirect: false,
+        });
+
+        if (result?.error) {
+          console.error("Sign in error:", result.error);
+        } else {
+          router.push('/dashboard');
+        }
       } catch (error) {
         console.error("Error verifying OTP:", error);
       } finally {
@@ -55,8 +75,20 @@ export default function SignIn() {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    router.push('/dashboard');
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await signIn("google", {
+        redirect: false,
+      });
+
+      if (result?.error) {
+        console.error("Google sign in error:", result.error);
+      } else {
+        router.push('/dashboard');
+      }
+    } catch (error) {
+      console.error("Google sign in error:", error);
+    }
   };
 
   return (
