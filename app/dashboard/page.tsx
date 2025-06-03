@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { BarChart3, Image as ImageIcon, Keyboard } from "lucide-react"
 import Image from "next/image"
 import { DayPicker } from "react-day-picker"
@@ -48,7 +48,36 @@ function CalendarWidget() {
 
 export default function Dashboard() {
   const { data: session } = useSession();
-  
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      alert('File uploaded successfully!');
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert('Failed to upload file. Please try again.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#18132a] to-[#1a0066] p-6">
       <div className="flex justify-between items-start">
@@ -81,11 +110,20 @@ export default function Dashboard() {
               <span className="text-xs text-gray-300">{session?.user?.email || 'Not signed in'}</span>
             </div>
           </div>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            accept=".xlsx,.xls,.csv"
+            className="hidden"
+          />
           <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
             className="w-[360px] py-3 rounded-full bg-gradient-to-r from-[#221c4a] to-[#6d28d9] text-white font-semibold text-lg shadow-lg transition
-    hover:bg-gradient-to-r hover:from-[#7b3fa0] hover:to-[#221c4a]"
+    hover:bg-gradient-to-r hover:from-[#7b3fa0] hover:to-[#221c4a] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            IMPORT FILE
+            {uploading ? 'UPLOADING...' : 'IMPORT EXCEL/CSV'}
           </button>       
           <CalendarWidget />
         </div>
